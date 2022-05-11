@@ -32,9 +32,19 @@ public class Client extends EncryptedChat{
             byte[] toDecryptBytes = new byte[256];
             DatagramPacket toDecrypt = new DatagramPacket(toDecryptBytes, toDecryptBytes.length);
             clientSocket.receive(toDecrypt);
-            byte[] decryptedBytes = getDecryptedMsg(kp.getPrivate(), toDecrypt.getData());
-            String toRead = new String(decryptedBytes);
+            byte[] decryptedMsg = getDecryptedMsg(kp.getPrivate(), toDecrypt.getData());
+            String toRead = new String(decryptedMsg);
             System.out.println(toRead);
+            byte[] confToRecv = new byte[256];
+            DatagramPacket confirmationToRecv = new DatagramPacket(confToRecv, confToRecv.length);
+            clientSocket.receive(confirmationToRecv);
+            byte[] decryptedConfirmation = getDecryptedMsg(kp.getPrivate(), confirmationToRecv.getData());
+            String confirmation = new String(decryptedConfirmation);
+            System.out.println(confirmation);
+            if(confirmation.equals("<close>")){
+                clientSocket.close();
+                break;
+            }
         }
     }
 }

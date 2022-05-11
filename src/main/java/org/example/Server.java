@@ -31,6 +31,16 @@ public class Server extends EncryptedChat{
             byte[] decryptedBytes = getDecryptedMsg(kp.getPrivate(), toDecrypt.getData());
             String toRead = new String(decryptedBytes);
             System.out.println(toRead);
+            if(toRead.equals("!quit")){
+                byte[] toSend = getCryptedMsg(recvPublicKey,"<close>".getBytes());
+                DatagramPacket packageToSend = new DatagramPacket(toSend, toSend.length, toDecrypt.getAddress(), toDecrypt.getPort());
+                serverSocket.send(packageToSend);
+            }
+            else{
+                byte[] toSend = getCryptedMsg(recvPublicKey,"<ok>".getBytes());
+                DatagramPacket packageToSend = new DatagramPacket(toSend, toSend.length, toDecrypt.getAddress(), toDecrypt.getPort());
+                serverSocket.send(packageToSend);
+            }
         }
     }
 }

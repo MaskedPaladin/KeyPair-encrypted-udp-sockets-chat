@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="RecuperacionMP09" />
+        <module name="KeyPair-encrypted-udp-sockets-chat" />
       </profile>
     </annotationProcessing>
   </component>
