@@ -38,60 +38,10 @@ public class EncryptedChat {
         return kf.generatePublic(publicKey);
     }
     protected static void runServer() throws NoSuchAlgorithmException, IOException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        MulticastSocket serverSocket = new MulticastSocket(25565);
-        KeyPair kp = genKeyPair(2048);
-        byte[] in = new byte[2048];
-        DatagramPacket recive = new DatagramPacket(in, in.length);
-        serverSocket.receive(recive);
-        PublicKey recvPublicKey = getPublicKey(recive.getData());
-        DatagramPacket send = new DatagramPacket(kp.getPublic().getEncoded(), kp.getPublic().getEncoded().length, recive.getAddress(), recive.getPort());
-        serverSocket.send(send);
-        while(true){
-            ArrayList<KeyPair> keyPairs = new ArrayList<KeyPair>();
-            byte[] toDecryptBytes = new byte[256];
-            DatagramPacket toDecrypt = new DatagramPacket(toDecryptBytes, toDecryptBytes.length);
-            serverSocket.receive(toDecrypt);
-            byte[] decryptedBytes = getDecryptedMsg(kp.getPrivate(), toDecrypt.getData());
-            String toRead = new String(decryptedBytes);
-            System.out.println(toRead);
-            if(toRead.equals("!quit")){
-                byte[] toSend = getCryptedMsg(recvPublicKey,"<close>".getBytes());
-                DatagramPacket packageToSend = new DatagramPacket(toSend, toSend.length, toDecrypt.getAddress(), toDecrypt.getPort());
-                serverSocket.send(packageToSend);
-            }
-            else{
-                byte[] toSend = getCryptedMsg(recvPublicKey,"<ok>".getBytes());
-                DatagramPacket packageToSend = new DatagramPacket(toSend, toSend.length, toDecrypt.getAddress(), toDecrypt.getPort());
-                serverSocket.send(packageToSend);
-            }
-        }
+
     }
     protected static void runClient() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        MulticastSocket clientSocket = new MulticastSocket();
-        KeyPair kp = genKeyPair(2048);
-        DatagramPacket send = new DatagramPacket(kp.getPublic().getEncoded(), kp.getPublic().getEncoded().length, InetAddress.getLocalHost() ,25565);
-        clientSocket.send(send);
-        byte[] in = new byte[2048];
-        DatagramPacket recive = new DatagramPacket(in, in.length);
-        clientSocket.receive(recive);
-        PublicKey recvPublicKey = getPublicKey(recive.getData());
-        while(true){
-            Scanner sc = new Scanner(System.in);
-            String toEncrypt = sc.next();
-            byte[] toSend = getCryptedMsg(recvPublicKey, toEncrypt.getBytes());
-            DatagramPacket packageToSend = new DatagramPacket(toSend, toSend.length, InetAddress.getLocalHost() ,25565);
-            clientSocket.send(packageToSend);
-            byte[] toDecryptBytes = new byte[256];
-            DatagramPacket toDecrypt = new DatagramPacket(toDecryptBytes, toDecryptBytes.length);
-            clientSocket.receive(toDecrypt);
-            byte[] decryptedMsg = getDecryptedMsg(kp.getPrivate(), toDecrypt.getData());
-            String toRead = new String(decryptedMsg);
-            if(toRead.equals("<close>")){
-                clientSocket.close();
-                break;
-            }
-            System.out.println(toRead);
-        }
+
     }
 }
 
